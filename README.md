@@ -17,7 +17,7 @@ percentage.
   against the Go service, running independent branches in parallel.
 - **Strict validation on both layers,** with a consistent JSON error contract and meaningful
   status codes.
-- **Well tested:** 91% backend and 98.8% frontend coverage, enforced in CI alongside linting,
+- **Well tested:** 91% backend and 98.9% frontend coverage, enforced in CI alongside linting,
   formatting and a Docker smoke test.
 - **One command to run:** `docker compose up --build` serves the UI and the API from a 15 MB
   distroless image.
@@ -72,7 +72,7 @@ make coverage   # writes backend/coverage.html and frontend/coverage/index.html
 | Backend — `internal/api` | HTTP tests through the real router (`httptest`) | 97.4% |
 | Backend — `cmd/server` | configuration, startup and graceful shutdown | 67.9% |
 | **Backend total** | | **91.1%** |
-| Frontend (97 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.8%** (97.6% branches) |
+| Frontend (102 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.9%** (97.7% branches) |
 
 Tests live next to the code they cover: `*_test.go` in the backend and `*.test.ts(x)` in the
 frontend.
