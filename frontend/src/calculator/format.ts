@@ -3,6 +3,8 @@ import { ExpressionSyntaxError } from '../expression/errors'
 import { ApiErrorCode } from '../types'
 
 const SIGNIFICANT_DIGITS = 15
+const HYPHEN_MINUS = /-/g
+const MINUS_SIGN = '−'
 
 const API_ERROR_MESSAGES: Partial<Record<string, string>> = {
   [ApiErrorCode.DivisionByZero]: 'Cannot divide by zero',
@@ -12,7 +14,8 @@ const API_ERROR_MESSAGES: Partial<Record<string, string>> = {
 }
 
 export function formatResult(value: number): string {
-  return String(Number.parseFloat(value.toPrecision(SIGNIFICANT_DIGITS)))
+  const rounded = Number.parseFloat(value.toPrecision(SIGNIFICANT_DIGITS))
+  return String(rounded).replace(HYPHEN_MINUS, MINUS_SIGN)
 }
 
 export function errorMessage(error: unknown): string {

@@ -12,7 +12,9 @@ describe('formatResult', () => {
     [1e25, '1e+25'],
     [-0, '0'],
     [12, '12'],
-    [-2.5, '-2.5'],
+    [-2.5, '−2.5'],
+    [-3, '−3'],
+    [1e-7, '1e−7'],
   ])('formats %d as %s', (value, expected) => {
     expect(formatResult(value)).toBe(expected)
   })
