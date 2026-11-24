@@ -111,3 +111,17 @@ magic numbers plus a non-extensible error `switch` in Go.*
 
 *The layout used a CSS grid that shrank the calculator to its minimum width; fixed and checked on
 desktop and mobile widths.*
+
+## 7. Independent review
+
+> Launch a separate subagent to review the whole code independently, read-only, with no context
+> from this session.
+
+*The reviewer found two bugs: continuing from a negative result with `^` lost the sign (`-5`,
+then `^2`, gave `-25`), and continuing from a result reused the rounded display value (`1÷3`,
+then `×3`, gave `0.999999999999`). Both were fixed test-first, together with Enter on a focused
+keypad key. Then I chose which of the minor findings to fix:*
+
+> Fix the Node.js version in the README, the 400 that should be a 413, the error codes that are
+> bare strings, the non-JSON 404/405 responses, the missing feedback at the length limit, and the
+> server timeouts.
