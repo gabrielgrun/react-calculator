@@ -59,7 +59,7 @@ make coverage   # writes backend/coverage.html and frontend/coverage/index.html
 | Backend — `internal/api` | HTTP tests through the real router (`httptest`) | 97.1% |
 | Backend — `cmd/server` | config + startup/graceful shutdown | 67.9% (the rest is `main()` wiring) |
 | **Backend total** | | **90.4%** |
-| Frontend (97 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.8%** (97.4% branches) |
+| Frontend (97 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.8%** (97.6% branches) |
 
 `npm run test:coverage` fails below 90% lines/functions/statements or 85% branches. CI uploads both
 coverage reports as artifacts on every push.
