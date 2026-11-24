@@ -15,6 +15,9 @@ import (
 
 const (
 	readHeaderTimeout = 5 * time.Second
+	readTimeout       = 10 * time.Second
+	writeTimeout      = 10 * time.Second
+	idleTimeout       = 60 * time.Second
 	shutdownTimeout   = 10 * time.Second
 )
 
@@ -37,6 +40,9 @@ func run(ctx context.Context, logger *slog.Logger, cfg config) error {
 		Addr:              ":" + cfg.Port,
 		Handler:           api.NewRouter(logger, static),
 		ReadHeaderTimeout: readHeaderTimeout,
+		ReadTimeout:       readTimeout,
+		WriteTimeout:      writeTimeout,
+		IdleTimeout:       idleTimeout,
 	}
 
 	listenErr := make(chan error, 1)
