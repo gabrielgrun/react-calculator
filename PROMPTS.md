@@ -51,9 +51,11 @@ it for development, as the brief requires.*
 
 ## 4. Implementation approach
 
+*The AI wrote a 13-task implementation plan and offered to execute it directly in this session,
+pausing for my review after the backend, the expression engine and the UI.*
+
 > Write the tests first, make sure they fail, and only then write the implementation. Run it
-> directly in this session, pausing for my review after the backend, the expression engine and
-> the UI.
+> directly in this session.
 
 > Are we making small commits for each part? Commit after every task, but only push at the end.
 
