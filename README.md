@@ -21,7 +21,7 @@ Open **http://localhost:8080**. One container serves both the UI and the API.
 
 ## Development
 
-Prerequisites: **Go 1.27+** and **Node.js 22+**.
+Prerequisites: **Go 1.27+** and **Node.js 24+** (22.13+ also works).
 
 **Backend** (http://localhost:8080):
 
@@ -56,9 +56,9 @@ make coverage   # writes backend/coverage.html and frontend/coverage/index.html
 | Layer | Tests | Coverage (statements) |
 |---|---|---|
 | Backend — `internal/calculator` | table-driven unit tests | 100% |
-| Backend — `internal/api` | HTTP tests through the real router (`httptest`) | 97.1% |
+| Backend — `internal/api` | HTTP tests through the real router (`httptest`) | 97.4% |
 | Backend — `cmd/server` | config + startup/graceful shutdown | 67.9% (the rest is `main()` wiring) |
-| **Backend total** | | **90.4%** |
+| **Backend total** | | **91.1%** |
 | Frontend (97 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.8%** (97.6% branches) |
 
 `npm run test:coverage` fails below 90% lines/functions/statements or 85% branches. CI uploads both
