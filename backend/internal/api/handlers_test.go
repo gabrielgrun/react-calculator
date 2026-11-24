@@ -114,8 +114,9 @@ func TestOperations_InvalidInput(t *testing.T) {
 
 func TestRouting(t *testing.T) {
 	runRouteCases(t, []routeCase{
-		{name: "wrong method", method: http.MethodGet, path: "/api/v1/add", wantStatus: 405},
-		{name: "unknown operation", path: "/api/v1/modulo", body: `{"a":1,"b":2}`, wantStatus: 404},
+		{name: "wrong method", method: http.MethodGet, path: "/api/v1/add", wantStatus: 405, wantBody: errorBody("method_not_allowed", "use POST for /api/v1/add")},
+		{name: "wrong method on health check", path: "/healthz", wantStatus: 405, wantBody: errorBody("method_not_allowed", "use GET for /healthz")},
+		{name: "unknown operation", path: "/api/v1/modulo", body: `{"a":1,"b":2}`, wantStatus: 404, wantBody: errorBody("not_found", "no API endpoint at /api/v1/modulo")},
 		{name: "health check", method: http.MethodGet, path: "/healthz", wantStatus: 200, wantBody: `{"status":"ok"}`},
 	})
 }

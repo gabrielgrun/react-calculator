@@ -81,6 +81,8 @@ Errors always have the same shape: `{"error": {"code": "...", "message": "..."}}
 |---|---|---|
 | 400 | `invalid_json` | malformed JSON, wrong types, unknown fields, trailing data |
 | 400 | `missing_operand` | `a` or `b` absent (`0` is a valid operand) |
+| 404 | `not_found` | unknown endpoint under `/api/` |
+| 405 | `method_not_allowed` | wrong HTTP method (the `Allow` header names the right one) |
 | 413 | `payload_too_large` | body over 1 KB |
 | 422 | `division_by_zero`, `negative_sqrt`, `undefined_result`, `overflow` | valid request, impossible math |
 

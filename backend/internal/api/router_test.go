@@ -33,3 +33,22 @@ func TestNewRouter_WithoutStaticReturnsNotFoundForRoot(t *testing.T) {
 		t.Fatalf("GET / = %d, want 404", rec.Code)
 	}
 }
+
+func TestNewRouter_APIErrorsStayJSONWhenServingStaticFiles(t *testing.T) {
+	router := NewRouter(slog.New(slog.DiscardHandler), http.FileServer(http.Dir(t.TempDir())))
+
+	wrongMethod := serve(t, router, http.MethodGet, "/api/v1/add", "")
+	if wrongMethod.Code != http.StatusMethodNotAllowed {
+		t.Fatalf("GET /api/v1/add = %d, want 405", wrongMethod.Code)
+	}
+	if allow := wrongMethod.Header().Get("Allow"); allow != http.MethodPost {
+		t.Fatalf("Allow = %q, want POST", allow)
+	}
+	assertJSON(t, wrongMethod.Body.Bytes(), errorBody("method_not_allowed", "use POST for /api/v1/add"))
+
+	unknown := serve(t, router, http.MethodPost, "/api/v1/modulo", `{"a":1,"b":2}`)
+	if unknown.Code != http.StatusNotFound {
+		t.Fatalf("POST /api/v1/modulo = %d, want 404", unknown.Code)
+	}
+	assertJSON(t, unknown.Body.Bytes(), errorBody("not_found", "no API endpoint at /api/v1/modulo"))
+}
