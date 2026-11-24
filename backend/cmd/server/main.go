@@ -13,6 +13,11 @@ import (
 	"github.com/gabrielgrun/react-calculator/backend/internal/api"
 )
 
+const (
+	readHeaderTimeout = 5 * time.Second
+	shutdownTimeout   = 10 * time.Second
+)
+
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	if err := run(logger, loadConfig(os.Getenv)); err != nil {
@@ -29,7 +34,7 @@ func run(logger *slog.Logger, cfg config) error {
 	server := &http.Server{
 		Addr:              ":" + cfg.Port,
 		Handler:           api.NewRouter(logger, static),
-		ReadHeaderTimeout: 5 * time.Second,
+		ReadHeaderTimeout: readHeaderTimeout,
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
@@ -47,7 +52,7 @@ func run(logger *slog.Logger, cfg config) error {
 	case <-ctx.Done():
 	}
 
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 	if err := server.Shutdown(shutdownCtx); err != nil {
 		return err

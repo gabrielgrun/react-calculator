@@ -106,17 +106,21 @@ func respondWithResult(w http.ResponseWriter, result float64, err error) {
 	writeJSON(w, http.StatusOK, resultResponse{Result: result})
 }
 
+var mathErrorCodes = []struct {
+	err  error
+	code string
+}{
+	{calculator.ErrDivisionByZero, "division_by_zero"},
+	{calculator.ErrNegativeSqrt, "negative_sqrt"},
+	{calculator.ErrUndefinedResult, "undefined_result"},
+	{calculator.ErrOverflow, "overflow"},
+}
+
 func mathErrorCode(err error) string {
-	switch {
-	case errors.Is(err, calculator.ErrDivisionByZero):
-		return "division_by_zero"
-	case errors.Is(err, calculator.ErrNegativeSqrt):
-		return "negative_sqrt"
-	case errors.Is(err, calculator.ErrUndefinedResult):
-		return "undefined_result"
-	case errors.Is(err, calculator.ErrOverflow):
-		return "overflow"
-	default:
-		return "calculation_failed"
+	for _, entry := range mathErrorCodes {
+		if errors.Is(err, entry.err) {
+			return entry.code
+		}
 	}
+	return "calculation_failed"
 }
