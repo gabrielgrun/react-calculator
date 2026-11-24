@@ -31,25 +31,24 @@ export function useCalculator(api: CalculatorApi) {
   const [state, setState] = useState<CalculatorState>({ expression: '', display: IDLE })
   const inFlight = useRef(false)
 
-  function input(text: string): void {
-    if (inFlight.current) {
-      return
+  function unlessBusy(update: () => void): void {
+    if (!inFlight.current) {
+      update()
     }
-    setState((current) => appendInput(current, text))
+  }
+
+  function input(text: string): void {
+    unlessBusy(() => setState((current) => appendInput(current, text)))
   }
 
   function backspace(): void {
-    if (inFlight.current) {
-      return
-    }
-    setState((current) => ({ expression: current.expression.slice(0, -1), display: IDLE }))
+    unlessBusy(() =>
+      setState((current) => ({ expression: current.expression.slice(0, -1), display: IDLE })),
+    )
   }
 
   function clear(): void {
-    if (inFlight.current) {
-      return
-    }
-    setState({ expression: '', display: IDLE })
+    unlessBusy(() => setState({ expression: '', display: IDLE }))
   }
 
   async function submit(): Promise<void> {
