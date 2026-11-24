@@ -84,10 +84,16 @@ func decodeJSON(w http.ResponseWriter, r *http.Request, dst any) error {
 	if err := decoder.Decode(dst); err != nil {
 		return err
 	}
-	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
+	err := decoder.Decode(&struct{}{})
+	var tooLarge *http.MaxBytesError
+	switch {
+	case errors.Is(err, io.EOF):
+		return nil
+	case errors.As(err, &tooLarge):
+		return err
+	default:
 		return errInvalidJSON
 	}
-	return nil
 }
 
 func requireOperand(w http.ResponseWriter, name string, value *float64) bool {

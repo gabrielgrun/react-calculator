@@ -108,6 +108,7 @@ func TestOperations_InvalidInput(t *testing.T) {
 		{name: "trailing data", path: "/api/v1/add", body: `{"a":1,"b":2}xyz`, wantStatus: 400, wantBody: errorBody("invalid_json", "request body must be a JSON object with numeric operands")},
 		{name: "empty body", path: "/api/v1/add", body: ``, wantStatus: 400, wantBody: errorBody("invalid_json", "request body must be a JSON object with numeric operands")},
 		{name: "body too large", path: "/api/v1/add", body: `{"a":1,"b":2` + strings.Repeat(" ", 2000) + `}`, wantStatus: 413, wantBody: errorBody("payload_too_large", "request body must not exceed 1024 bytes")},
+		{name: "body too large after the object", path: "/api/v1/add", body: `{"a":1,"b":2}` + strings.Repeat(" ", 2000), wantStatus: 413, wantBody: errorBody("payload_too_large", "request body must not exceed 1024 bytes")},
 	})
 }
 
