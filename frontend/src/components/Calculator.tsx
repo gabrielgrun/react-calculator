@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useEffectEvent } from 'react'
 import { useCalculator } from '../calculator/useCalculator'
 import { type CalculatorApi, DisplayKind } from '../types'
 import { Display } from './Display'
@@ -30,18 +30,19 @@ export function Calculator({ api }: CalculatorProps) {
     }
   }
 
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent): void {
-      const action = keyboardAction(event)
-      if (action === undefined) {
-        return
-      }
-      event.preventDefault()
-      perform(action)
+  const handleKeyDown = useEffectEvent((event: KeyboardEvent) => {
+    const action = keyboardAction(event)
+    if (action === undefined) {
+      return
     }
+    event.preventDefault()
+    perform(action)
+  })
+
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  })
+  }, [])
 
   return (
     <section className="calculator" aria-label="Calculator">
