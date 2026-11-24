@@ -10,6 +10,7 @@ import {
 } from './tokenizer'
 
 export const MAX_EXPRESSION_LENGTH = 200
+export const TOO_LONG_MESSAGE = `Expression is too long (max ${MAX_EXPRESSION_LENGTH} characters)`
 
 const MATCHING_BRACKET: Record<OpenBracket, CloseBracket> = { '(': ')', '[': ']', '{': '}' }
 
@@ -51,10 +52,7 @@ function isOperator(token: Token | undefined, value: Operator): boolean {
 
 export function parse(input: string): Expr {
   if (input.length > MAX_EXPRESSION_LENGTH) {
-    throw new ExpressionSyntaxError(
-      `Expression is too long (max ${MAX_EXPRESSION_LENGTH} characters)`,
-      MAX_EXPRESSION_LENGTH,
-    )
+    throw new ExpressionSyntaxError(TOO_LONG_MESSAGE, MAX_EXPRESSION_LENGTH)
   }
 
   const tokens = tokenize(input)

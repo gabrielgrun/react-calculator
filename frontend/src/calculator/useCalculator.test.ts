@@ -167,6 +167,10 @@ describe('useCalculator', () => {
 
     type('1'.repeat(200), '+')
     expect(result.current.expression).toBe('1'.repeat(200))
+    expect(result.current.display).toEqual({
+      kind: DisplayKind.Error,
+      message: 'Expression is too long (max 200 characters)',
+    })
   })
 
   it('removes the last character on backspace', () => {

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { evaluate } from '../expression/evaluator'
-import { MAX_EXPRESSION_LENGTH, parse } from '../expression/parser'
+import { MAX_EXPRESSION_LENGTH, TOO_LONG_MESSAGE, parse } from '../expression/parser'
 import { type CalculatorApi, DisplayKind, type DisplayState, type Expr } from '../types'
 import { errorMessage } from './format'
 
@@ -26,7 +26,7 @@ function editableText(state: CalculatorState, text: string): string {
 function appendInput(state: CalculatorState, text: string): CalculatorState {
   const expression = editableText(state, text) + text
   if (expression.length > MAX_EXPRESSION_LENGTH) {
-    return state
+    return { ...state, display: { kind: DisplayKind.Error, message: TOO_LONG_MESSAGE } }
   }
   return { expression, display: IDLE }
 }
