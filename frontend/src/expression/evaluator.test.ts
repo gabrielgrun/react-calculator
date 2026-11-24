@@ -26,12 +26,24 @@ describe('evaluate', () => {
     expect(api.calls).toEqual([])
   })
 
-  it('negates by subtracting from zero', async () => {
+  it('negates an expression by subtracting it from zero', async () => {
+    const api = createFakeCalculatorApi()
+
+    await expect(evaluate(parse('-(2+3)'), api)).resolves.toBe(-5)
+
+    expect(api.calls).toEqual([
+      { op: BinaryOperation.Add, a: 2, b: 3 },
+      { op: BinaryOperation.Subtract, a: 0, b: 5 },
+    ])
+  })
+
+  it('treats negative numbers as literals, without calling the API', async () => {
     const api = createFakeCalculatorApi()
 
     await expect(evaluate(parse('-5'), api)).resolves.toBe(-5)
+    await expect(evaluate(parse('-'.repeat(199) + '1'), api)).resolves.toBe(-1)
 
-    expect(api.calls).toEqual([{ op: BinaryOperation.Subtract, a: 0, b: 5 }])
+    expect(api.calls).toEqual([])
   })
 
   it('calls the unary endpoints for square root and percentage', async () => {

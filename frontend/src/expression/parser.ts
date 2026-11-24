@@ -46,6 +46,16 @@ function unexpected(token: Token | undefined, endPosition: number): ExpressionSy
   return new ExpressionSyntaxError(`Unexpected ${describeToken(token)}`, token.position)
 }
 
+function negate(operand: Expr): Expr {
+  if (operand.kind === ExprKind.Number) {
+    return { kind: ExprKind.Number, value: -operand.value }
+  }
+  if (operand.kind === ExprKind.Unary && operand.op === UnaryOperator.Negate) {
+    return operand.operand
+  }
+  return { kind: ExprKind.Unary, op: UnaryOperator.Negate, operand }
+}
+
 function isOperator(token: Token | undefined, value: Operator): boolean {
   return token?.type === TokenType.Operator && token.value === value
 }
@@ -91,7 +101,7 @@ export function parse(input: string): Expr {
   function parseUnary(): Expr {
     if (isOperator(peek(), Operator.Minus)) {
       next()
-      return { kind: ExprKind.Unary, op: UnaryOperator.Negate, operand: parseUnary() }
+      return negate(parseUnary())
     }
     return parsePower()
   }
