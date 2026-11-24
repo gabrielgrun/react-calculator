@@ -80,7 +80,8 @@ frontend.
 `npm run test:coverage` fails below 90% lines/functions/statements or 85% branches.
 
 **Coverage reports online:** open the latest
-[CI run](https://github.com/gabrielgrun/react-calculator/actions/workflows/ci.yml).
+[CI run](https://github.com/gabrielgrun/react-calculator/actions/workflows/ci.yml) while signed in
+to GitHub (GitHub only shows job summaries and artifact downloads to signed-in users).
 
 - The run's summary page shows the **Backend coverage** and **Frontend coverage** tables.
 - The full HTML reports are uploaded by the `actions/upload-artifact` step of each job and listed
