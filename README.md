@@ -9,6 +9,19 @@ operation.
 Supports addition, subtraction, multiplication, division, exponentiation, square root and
 percentage.
 
+**Highlights**
+
+- **Real expression engine:** a recursive-descent parser handles operator precedence,
+  associativity and nested `()`, `[]`, `{}`, so `2×[3+(4−1)]` evaluates to `12`.
+- **Every operation goes through the API:** the UI evaluates the expression tree node by node
+  against the Go service, running independent branches in parallel.
+- **Strict validation on both layers,** with a consistent JSON error contract and meaningful
+  status codes.
+- **Well tested:** 91% backend and 98.8% frontend coverage, enforced in CI alongside linting,
+  formatting and a Docker smoke test.
+- **One command to run:** `docker compose up --build` serves the UI and the API from a 15 MB
+  distroless image.
+
 ## Quick start (Docker)
 
 The only requirement is Docker.
@@ -57,7 +70,7 @@ make coverage   # writes backend/coverage.html and frontend/coverage/index.html
 |---|---|---|
 | Backend — `internal/calculator` | table-driven unit tests | 100% |
 | Backend — `internal/api` | HTTP tests through the real router (`httptest`) | 97.4% |
-| Backend — `cmd/server` | config + startup/graceful shutdown | 67.9% (the rest is `main()` wiring) |
+| Backend — `cmd/server` | configuration, startup and graceful shutdown | 67.9% |
 | **Backend total** | | **91.1%** |
 | Frontend (97 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.8%** (97.6% branches) |
 
@@ -116,8 +129,8 @@ curl -X POST localhost:8080/api/v1/add -d '{"a":"2","b":3}'
 
 ## How the expression engine works
 
-The UI lets users type whole expressions such as `2×[3+(4−1)]`. The frontend turns the text into a
-tree and asks the backend to compute each node, so **every endpoint above is used by the UI**.
+Users type whole expressions such as `2×[3+(4−1)]`. The frontend turns the text into a tree and
+asks the backend to compute each node, so the UI is built directly on the per-operation API.
 
 1. **Tokenizer** (`frontend/src/expression/tokenizer.ts`) turns text into tokens: numbers
    (including `1e+25`), operators, `√` and brackets. It accepts both `× ÷ −` and `* / -`.
@@ -151,33 +164,36 @@ tree and asks the backend to compute each node, so **every endpoint above is use
 
 ## Design decisions & assumptions
 
-- **The frontend parses, the backend computes.** Approaches considered:
-  - *(chosen)* The frontend builds the tree and calls one endpoint per operation. The frontend
-    owns input syntax (brackets, precedence) and the backend owns arithmetic and its edge cases.
-    No endpoint exists only to satisfy the brief.
-  - A single `/calculate` endpoint receiving the whole expression. Fewer requests, but the
-    per-operation endpoints the brief asks for would be unused.
-  - A "pocket calculator" UI that computes after each operator. Simple, but `2+3×4` would give 20.
-- **Trade-off:** an expression costs one HTTP call per operation. That's negligible for a
-  calculator; a batch endpoint would be the next step if latency mattered.
+- **The frontend parses, the backend computes.** I compared three approaches:
+  - *(chosen)* The frontend builds the expression tree and calls one endpoint per operation. Each
+    layer has a single responsibility: the frontend owns input syntax (brackets, precedence), the
+    backend owns arithmetic and its edge cases, and every endpoint is a real dependency of the UI.
+  - A single `/calculate` endpoint receiving the whole expression: fewer requests, but the
+    per-operation endpoints would become unused API surface.
+  - A pocket-calculator UI that computes after each key press: simpler, but it ignores operator
+    precedence (`2+3×4` would give 20).
+- **Request volume:** an expression costs one HTTP call per operation, with independent branches
+  in parallel. If latency became a concern, a batch endpoint could evaluate a whole tree in one
+  round-trip while keeping the same per-operation contract.
 - **400 vs 422:** 400 means the request itself is wrong; 422 means it is valid but the math is
   impossible. Clients can tell "fix your request" from "this has no answer".
-- **`%` always means `/100`:** `200×10%` = 20, but `200+10%` = 200.1, unlike phone calculators
-  that treat it as "10% of 200". The consistent rule is easier to reason about.
+- **Percentage is a unary operator:** `x%` always evaluates to `x / 100`, so it composes
+  predictably with every other operator (`200×10%` = 20). Context-dependent percentage, as some
+  handheld calculators apply to `200+10%`, was left out to keep the grammar unambiguous.
 - **Numbers are IEEE-754 doubles** (`float64` / JS `number`). Results are shown with 15
   significant digits (the most decimal digits a double always preserves), so `0.1+0.2` shows
   `0.3`. Continuing from a result uses the full-precision value, so `1÷3`, then `×3`, gives `1`.
-  Arbitrary precision is out of scope.
-- **Validation on both layers:** the frontend rejects bad syntax and numbers too large to send
-  (`1e999`) before calling the API. The backend still validates everything it receives, since
-  other clients can call it.
-- **Go standard library only:** `net/http` method routing (Go 1.22+) is enough for 8 routes.
+- **Validation on both layers:** the frontend catches bad syntax and out-of-range numbers
+  (`1e999`) before any request is made. The backend validates independently, so the API is safe
+  for any client, not just this UI.
+- **Go standard library only:** `net/http` method routing (Go 1.22+) covers every routing need
+  with zero third-party dependencies.
 - **No CORS:** in development Vite proxies `/api`; in Docker the Go server serves the built SPA from
   the same origin.
 - **Docker image:** multi-stage build (Node → Go → distroless, non-root), about 15 MB.
-- **TypeScript:** `strict`, no `any`, no `!` non-null assertions, no `as` casts. The linter
-  (oxlint) enforces all three. Kinds are named with const-object enums (`DisplayKind.Result`),
-  since the project's `erasableSyntaxOnly` setting doesn't allow TS `enum`.
+- **TypeScript:** `strict`, with no `any`, no `!` non-null assertions and no `as` casts, all
+  enforced by the linter (oxlint). Kinds are const-object enums (`DisplayKind.Result`) rather than
+  TS `enum`, which keeps the code compatible with `erasableSyntaxOnly` and native type stripping.
 - **Input limits:** expressions up to 200 characters; request bodies up to 1 KB.
 
 ## Project structure
