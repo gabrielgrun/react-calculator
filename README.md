@@ -209,7 +209,6 @@ frontend/src/
   expression/            tokenizer → parser → evaluator
   calculator/            input state hook, result formatting, error messages
   components/            Calculator, Display, Keypad, keyboard mapping
-docs/                    design spec and implementation plan
 Dockerfile, docker-compose.yml, Makefile, .github/workflows/ci.yml
 PROMPTS.md               prompts used with the AI assistant
 ```
