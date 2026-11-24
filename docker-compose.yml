@@ -1,0 +1,8 @@
+name: react-calculator
+
+services:
+  calculator:
+    build: .
+    image: react-calculator
+    ports:
+      - "8080:8080"

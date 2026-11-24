@@ -1,0 +1,4 @@
+.superpowers/
+backend/coverage.out
+backend/coverage.html
+.DS_Store
