@@ -48,6 +48,8 @@ const CLOSE_BRACKETS: Record<string, CloseBracket> = { ')': ')', ']': ']', '}': 
 const NUMBER_CANDIDATE = /[\d.]+(?:[eE][+-]?\d+)?/y
 const VALID_NUMBER = /^(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/
 const WHITESPACE = /\s/
+const NUMBER_START = /[\d.]/
+const SQRT = '√'
 
 function readNumber(input: string, position: number): { token: Token; length: number } {
   NUMBER_CANDIDATE.lastIndex = position
@@ -62,6 +64,22 @@ function readNumber(input: string, position: number): { token: Token; length: nu
   return { token: { type: TokenType.Number, value, position }, length: lexeme.length }
 }
 
+function singleCharToken(char: string, position: number): Token | undefined {
+  if (char in OPERATORS) {
+    return { type: TokenType.Operator, value: OPERATORS[char], position }
+  }
+  if (char === SQRT) {
+    return { type: TokenType.Sqrt, position }
+  }
+  if (char in OPEN_BRACKETS) {
+    return { type: TokenType.Open, bracket: OPEN_BRACKETS[char], position }
+  }
+  if (char in CLOSE_BRACKETS) {
+    return { type: TokenType.Close, bracket: CLOSE_BRACKETS[char], position }
+  }
+  return undefined
+}
+
 export function tokenize(input: string): Token[] {
   const tokens: Token[] = []
   let position = 0
@@ -71,25 +89,22 @@ export function tokenize(input: string): Token[] {
 
     if (WHITESPACE.test(char)) {
       position += 1
-    } else if (/[\d.]/.test(char)) {
+      continue
+    }
+
+    if (NUMBER_START.test(char)) {
       const { token, length } = readNumber(input, position)
       tokens.push(token)
       position += length
-    } else if (char in OPERATORS) {
-      tokens.push({ type: TokenType.Operator, value: OPERATORS[char], position })
-      position += 1
-    } else if (char === '√') {
-      tokens.push({ type: TokenType.Sqrt, position })
-      position += 1
-    } else if (char in OPEN_BRACKETS) {
-      tokens.push({ type: TokenType.Open, bracket: OPEN_BRACKETS[char], position })
-      position += 1
-    } else if (char in CLOSE_BRACKETS) {
-      tokens.push({ type: TokenType.Close, bracket: CLOSE_BRACKETS[char], position })
-      position += 1
-    } else {
+      continue
+    }
+
+    const token = singleCharToken(char, position)
+    if (token === undefined) {
       throw new ExpressionSyntaxError(`Unexpected character "${char}"`, position)
     }
+    tokens.push(token)
+    position += 1
   }
 
   return tokens
