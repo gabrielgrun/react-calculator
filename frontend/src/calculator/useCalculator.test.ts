@@ -34,7 +34,7 @@ describe('useCalculator', () => {
     await submit()
 
     expect(result.current.expression).toBe('2+3')
-    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: '5' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: 5 })
   })
 
   it('starts a new expression when a digit is typed after a result', async () => {
@@ -62,12 +62,34 @@ describe('useCalculator', () => {
     const { result, type, submit } = setup()
     type('1e25*1')
     await submit()
-    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: '1e+25' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: 1e25 })
 
     type('*', '2')
     await submit()
 
-    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: '2e+25' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: 2e25 })
+  })
+
+  it('continues from a negative result as a single value', async () => {
+    const { result, type, submit } = setup()
+    type('0-5')
+    await submit()
+
+    type('^', '2')
+    await submit()
+
+    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: 25 })
+  })
+
+  it('continues from the full-precision result, not the rounded display', async () => {
+    const { result, type, submit } = setup()
+    type('1/3')
+    await submit()
+
+    type('*', '3')
+    await submit()
+
+    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: 1 })
   })
 
   it('shows syntax errors without calling the API', async () => {
@@ -134,7 +156,7 @@ describe('useCalculator', () => {
       resolvers.forEach((resolve) => resolve(5))
       await firstSubmit
     })
-    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: '5' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: 5 })
   })
 
   it('ignores input that would exceed the maximum length', () => {

@@ -50,5 +50,5 @@ export type DisplayKind = ValueOf<typeof DisplayKind>
 export type DisplayState =
   | { kind: typeof DisplayKind.Idle }
   | { kind: typeof DisplayKind.Loading }
-  | { kind: typeof DisplayKind.Result; value: string }
+  | { kind: typeof DisplayKind.Result; value: number }
   | { kind: typeof DisplayKind.Error; message: string }

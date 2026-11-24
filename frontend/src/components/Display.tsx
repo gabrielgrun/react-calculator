@@ -1,3 +1,4 @@
+import { formatResult } from '../calculator/format'
 import { DisplayKind, type DisplayState } from '../types'
 
 interface DisplayProps {
@@ -12,7 +13,7 @@ function statusText(display: DisplayState): string {
     case DisplayKind.Loading:
       return 'Calculating…'
     case DisplayKind.Result:
-      return display.value
+      return formatResult(display.value)
     case DisplayKind.Error:
       return display.message
   }

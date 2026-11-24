@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { evaluate } from '../expression/evaluator'
 import { MAX_EXPRESSION_LENGTH, parse } from '../expression/parser'
 import { type CalculatorApi, DisplayKind, type DisplayState, type Expr } from '../types'
-import { errorMessage, formatResult } from './format'
+import { errorMessage } from './format'
 
 interface CalculatorState {
   expression: string
@@ -12,11 +12,15 @@ interface CalculatorState {
 const IDLE: DisplayState = { kind: DisplayKind.Idle }
 const STARTS_WITH_OPERATOR = /^[+\-*/^%×÷−]/
 
+function resultAsOperand(value: number): string {
+  return value < 0 ? `(${value})` : String(value)
+}
+
 function editableText(state: CalculatorState, text: string): string {
   if (state.display.kind !== DisplayKind.Result) {
     return state.expression
   }
-  return STARTS_WITH_OPERATOR.test(text) ? state.display.value : ''
+  return STARTS_WITH_OPERATOR.test(text) ? resultAsOperand(state.display.value) : ''
 }
 
 function appendInput(state: CalculatorState, text: string): CalculatorState {
@@ -71,7 +75,7 @@ export function useCalculator(api: CalculatorApi) {
     setState({ expression, display: { kind: DisplayKind.Loading } })
     try {
       const value = await evaluate(tree, api)
-      setState({ expression, display: { kind: DisplayKind.Result, value: formatResult(value) } })
+      setState({ expression, display: { kind: DisplayKind.Result, value } })
     } catch (error) {
       showError(error)
     } finally {
