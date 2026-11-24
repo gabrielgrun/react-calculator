@@ -1,26 +1,19 @@
 import { useRef, useState } from 'react'
-import type { CalculatorApi } from '../api/calculatorClient'
-import type { Expr } from '../expression/ast'
 import { evaluate } from '../expression/evaluator'
 import { MAX_EXPRESSION_LENGTH, parse } from '../expression/parser'
+import { type CalculatorApi, DisplayKind, type DisplayState, type Expr } from '../types'
 import { errorMessage, formatResult } from './format'
-
-export type DisplayState =
-  | { kind: 'idle' }
-  | { kind: 'loading' }
-  | { kind: 'result'; value: string }
-  | { kind: 'error'; message: string }
 
 interface CalculatorState {
   expression: string
   display: DisplayState
 }
 
-const IDLE: DisplayState = { kind: 'idle' }
+const IDLE: DisplayState = { kind: DisplayKind.Idle }
 const STARTS_WITH_OPERATOR = /^[+\-*/^%×÷−]/
 
 function editableText(state: CalculatorState, text: string): string {
-  if (state.display.kind !== 'result') {
+  if (state.display.kind !== DisplayKind.Result) {
     return state.expression
   }
   return STARTS_WITH_OPERATOR.test(text) ? state.display.value : ''
@@ -65,7 +58,7 @@ export function useCalculator(api: CalculatorApi) {
     }
     const { expression } = state
     const showError = (error: unknown) =>
-      setState({ expression, display: { kind: 'error', message: errorMessage(error) } })
+      setState({ expression, display: { kind: DisplayKind.Error, message: errorMessage(error) } })
 
     let tree: Expr
     try {
@@ -76,10 +69,10 @@ export function useCalculator(api: CalculatorApi) {
     }
 
     inFlight.current = true
-    setState({ expression, display: { kind: 'loading' } })
+    setState({ expression, display: { kind: DisplayKind.Loading } })
     try {
       const value = await evaluate(tree, api)
-      setState({ expression, display: { kind: 'result', value: formatResult(value) } })
+      setState({ expression, display: { kind: DisplayKind.Result, value: formatResult(value) } })
     } catch (error) {
       showError(error)
     } finally {

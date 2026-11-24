@@ -1,26 +1,45 @@
+import type { ValueOf } from '../types'
 import { ExpressionSyntaxError } from './errors'
 
-export type Operator = '+' | '-' | '*' | '/' | '^' | '%'
+export const Operator = {
+  Plus: '+',
+  Minus: '-',
+  Times: '*',
+  Divide: '/',
+  Power: '^',
+  Percent: '%',
+} as const
+export type Operator = ValueOf<typeof Operator>
+
+export const TokenType = {
+  Number: 'number',
+  Operator: 'operator',
+  Sqrt: 'sqrt',
+  Open: 'open',
+  Close: 'close',
+} as const
+export type TokenType = ValueOf<typeof TokenType>
+
 export type OpenBracket = '(' | '[' | '{'
 export type CloseBracket = ')' | ']' | '}'
 
 export type Token =
-  | { type: 'number'; value: number; position: number }
-  | { type: 'operator'; value: Operator; position: number }
-  | { type: 'sqrt'; position: number }
-  | { type: 'open'; bracket: OpenBracket; position: number }
-  | { type: 'close'; bracket: CloseBracket; position: number }
+  | { type: typeof TokenType.Number; value: number; position: number }
+  | { type: typeof TokenType.Operator; value: Operator; position: number }
+  | { type: typeof TokenType.Sqrt; position: number }
+  | { type: typeof TokenType.Open; bracket: OpenBracket; position: number }
+  | { type: typeof TokenType.Close; bracket: CloseBracket; position: number }
 
 const OPERATORS: Record<string, Operator> = {
-  '+': '+',
-  '-': '-',
-  '−': '-',
-  '*': '*',
-  '×': '*',
-  '/': '/',
-  '÷': '/',
-  '^': '^',
-  '%': '%',
+  '+': Operator.Plus,
+  '-': Operator.Minus,
+  '−': Operator.Minus,
+  '*': Operator.Times,
+  '×': Operator.Times,
+  '/': Operator.Divide,
+  '÷': Operator.Divide,
+  '^': Operator.Power,
+  '%': Operator.Percent,
 }
 
 const OPEN_BRACKETS: Record<string, OpenBracket> = { '(': '(', '[': '[', '{': '{' }
@@ -40,7 +59,7 @@ function readNumber(input: string, position: number): { token: Token; length: nu
   if (!Number.isFinite(value)) {
     throw new ExpressionSyntaxError(`Number "${lexeme}" is too large`, position)
   }
-  return { token: { type: 'number', value, position }, length: lexeme.length }
+  return { token: { type: TokenType.Number, value, position }, length: lexeme.length }
 }
 
 export function tokenize(input: string): Token[] {
@@ -57,16 +76,16 @@ export function tokenize(input: string): Token[] {
       tokens.push(token)
       position += length
     } else if (char in OPERATORS) {
-      tokens.push({ type: 'operator', value: OPERATORS[char], position })
+      tokens.push({ type: TokenType.Operator, value: OPERATORS[char], position })
       position += 1
     } else if (char === '√') {
-      tokens.push({ type: 'sqrt', position })
+      tokens.push({ type: TokenType.Sqrt, position })
       position += 1
     } else if (char in OPEN_BRACKETS) {
-      tokens.push({ type: 'open', bracket: OPEN_BRACKETS[char], position })
+      tokens.push({ type: TokenType.Open, bracket: OPEN_BRACKETS[char], position })
       position += 1
     } else if (char in CLOSE_BRACKETS) {
-      tokens.push({ type: 'close', bracket: CLOSE_BRACKETS[char], position })
+      tokens.push({ type: TokenType.Close, bracket: CLOSE_BRACKETS[char], position })
       position += 1
     } else {
       throw new ExpressionSyntaxError(`Unexpected character "${char}"`, position)

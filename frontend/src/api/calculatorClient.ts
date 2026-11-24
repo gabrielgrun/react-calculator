@@ -1,10 +1,4 @@
-export type BinaryOperation = 'add' | 'subtract' | 'multiply' | 'divide' | 'power'
-export type UnaryOperation = 'sqrt' | 'percentage'
-
-export interface CalculatorApi {
-  binary(op: BinaryOperation, a: number, b: number): Promise<number>
-  unary(op: UnaryOperation, a: number): Promise<number>
-}
+import type { CalculatorApi } from '../types'
 
 export class ApiError extends Error {
   readonly code: string

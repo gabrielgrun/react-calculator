@@ -1,25 +1,37 @@
-import type { BinaryOperation } from '../api/calculatorClient'
-import type { Expr } from './ast'
+import { BinaryOperation, type Expr, ExprKind, UnaryOperator } from '../types'
 import { ExpressionSyntaxError } from './errors'
-import { type CloseBracket, type OpenBracket, type Token, tokenize } from './tokenizer'
+import {
+  type CloseBracket,
+  type OpenBracket,
+  Operator,
+  type Token,
+  TokenType,
+  tokenize,
+} from './tokenizer'
 
 export const MAX_EXPRESSION_LENGTH = 200
 
 const MATCHING_BRACKET: Record<OpenBracket, CloseBracket> = { '(': ')', '[': ']', '{': '}' }
 
-const ADDITIVE: Partial<Record<string, BinaryOperation>> = { '+': 'add', '-': 'subtract' }
-const MULTIPLICATIVE: Partial<Record<string, BinaryOperation>> = { '*': 'multiply', '/': 'divide' }
+const ADDITIVE: Partial<Record<Operator, BinaryOperation>> = {
+  [Operator.Plus]: BinaryOperation.Add,
+  [Operator.Minus]: BinaryOperation.Subtract,
+}
+const MULTIPLICATIVE: Partial<Record<Operator, BinaryOperation>> = {
+  [Operator.Times]: BinaryOperation.Multiply,
+  [Operator.Divide]: BinaryOperation.Divide,
+}
 
 function describeToken(token: Token): string {
   switch (token.type) {
-    case 'number':
+    case TokenType.Number:
       return 'number'
-    case 'operator':
+    case TokenType.Operator:
       return `"${token.value}"`
-    case 'sqrt':
+    case TokenType.Sqrt:
       return '"√"'
-    case 'open':
-    case 'close':
+    case TokenType.Open:
+    case TokenType.Close:
       return `"${token.bracket}"`
   }
 }
@@ -31,8 +43,8 @@ function unexpected(token: Token | undefined, endPosition: number): ExpressionSy
   return new ExpressionSyntaxError(`Unexpected ${describeToken(token)}`, token.position)
 }
 
-function isOperator(token: Token | undefined, value: string): boolean {
-  return token?.type === 'operator' && token.value === value
+function isOperator(token: Token | undefined, value: Operator): boolean {
+  return token?.type === TokenType.Operator && token.value === value
 }
 
 export function parse(input: string): Expr {
@@ -53,10 +65,10 @@ export function parse(input: string): Expr {
   const next = (): Token | undefined => tokens[index++]
 
   function binaryOperationOf(
-    table: Partial<Record<string, BinaryOperation>>,
+    table: Partial<Record<Operator, BinaryOperation>>,
   ): BinaryOperation | undefined {
     const token = peek()
-    return token?.type === 'operator' ? table[token.value] : undefined
+    return token?.type === TokenType.Operator ? table[token.value] : undefined
   }
 
   function parseExpression(): Expr {
@@ -64,7 +76,7 @@ export function parse(input: string): Expr {
     let op = binaryOperationOf(ADDITIVE)
     while (op !== undefined) {
       next()
-      left = { kind: 'binary', op, left, right: parseTerm() }
+      left = { kind: ExprKind.Binary, op, left, right: parseTerm() }
       op = binaryOperationOf(ADDITIVE)
     }
     return left
@@ -75,47 +87,47 @@ export function parse(input: string): Expr {
     let op = binaryOperationOf(MULTIPLICATIVE)
     while (op !== undefined) {
       next()
-      left = { kind: 'binary', op, left, right: parseUnary() }
+      left = { kind: ExprKind.Binary, op, left, right: parseUnary() }
       op = binaryOperationOf(MULTIPLICATIVE)
     }
     return left
   }
 
   function parseUnary(): Expr {
-    if (isOperator(peek(), '-')) {
+    if (isOperator(peek(), Operator.Minus)) {
       next()
-      return { kind: 'unary', op: 'negate', operand: parseUnary() }
+      return { kind: ExprKind.Unary, op: UnaryOperator.Negate, operand: parseUnary() }
     }
     return parsePower()
   }
 
   function parsePower(): Expr {
     const base = parsePostfix()
-    if (!isOperator(peek(), '^')) {
+    if (!isOperator(peek(), Operator.Power)) {
       return base
     }
     next()
-    return { kind: 'binary', op: 'power', left: base, right: parseUnary() }
+    return { kind: ExprKind.Binary, op: BinaryOperation.Power, left: base, right: parseUnary() }
   }
 
   function parsePostfix(): Expr {
     let operand = parsePrimary()
-    while (isOperator(peek(), '%')) {
+    while (isOperator(peek(), Operator.Percent)) {
       next()
-      operand = { kind: 'unary', op: 'percentage', operand }
+      operand = { kind: ExprKind.Unary, op: UnaryOperator.Percentage, operand }
     }
     return operand
   }
 
   function parsePrimary(): Expr {
     const token = next()
-    if (token?.type === 'number') {
-      return { kind: 'number', value: token.value }
+    if (token?.type === TokenType.Number) {
+      return { kind: ExprKind.Number, value: token.value }
     }
-    if (token?.type === 'sqrt') {
-      return { kind: 'unary', op: 'sqrt', operand: parsePrimary() }
+    if (token?.type === TokenType.Sqrt) {
+      return { kind: ExprKind.Unary, op: UnaryOperator.Sqrt, operand: parsePrimary() }
     }
-    if (token?.type === 'open') {
+    if (token?.type === TokenType.Open) {
       const inner = parseExpression()
       expectClosing(token.bracket)
       return inner
@@ -129,7 +141,7 @@ export function parse(input: string): Expr {
     if (token === undefined) {
       throw new ExpressionSyntaxError(`Missing closing "${expected}"`, input.length)
     }
-    if (token.type !== 'close') {
+    if (token.type !== TokenType.Close) {
       throw unexpected(token, input.length)
     }
     if (token.bracket !== expected) {

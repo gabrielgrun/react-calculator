@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { ApiError, type CalculatorApi } from '../api/calculatorClient'
+import { ApiError } from '../api/calculatorClient'
+import type { CalculatorApi } from '../types'
 import { createFakeCalculatorApi } from '../test/fakeCalculatorApi'
 import { evaluate } from './evaluator'
 import { parse } from './parser'

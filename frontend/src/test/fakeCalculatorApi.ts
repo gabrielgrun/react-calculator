@@ -1,19 +1,19 @@
-import type { BinaryOperation, CalculatorApi, UnaryOperation } from '../api/calculatorClient'
+import { BinaryOperation, type CalculatorApi, UnaryOperation } from '../types'
 
 export type RecordedCall =
   { op: BinaryOperation; a: number; b: number } | { op: UnaryOperation; a: number }
 
 const BINARY: Record<BinaryOperation, (a: number, b: number) => number> = {
-  add: (a, b) => a + b,
-  subtract: (a, b) => a - b,
-  multiply: (a, b) => a * b,
-  divide: (a, b) => a / b,
-  power: (a, b) => a ** b,
+  [BinaryOperation.Add]: (a, b) => a + b,
+  [BinaryOperation.Subtract]: (a, b) => a - b,
+  [BinaryOperation.Multiply]: (a, b) => a * b,
+  [BinaryOperation.Divide]: (a, b) => a / b,
+  [BinaryOperation.Power]: (a, b) => a ** b,
 }
 
 const UNARY: Record<UnaryOperation, (a: number) => number> = {
-  sqrt: (a) => Math.sqrt(a),
-  percentage: (a) => a / 100,
+  [UnaryOperation.Sqrt]: (a) => Math.sqrt(a),
+  [UnaryOperation.Percentage]: (a) => a / 100,
 }
 
 export function createFakeCalculatorApi(): CalculatorApi & { calls: RecordedCall[] } {

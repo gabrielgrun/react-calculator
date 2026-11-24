@@ -1,18 +1,28 @@
 import { describe, expect, it } from 'vitest'
-import type { Expr } from './ast'
+import { BinaryOperation, type Expr, ExprKind, UnaryOperator } from '../types'
 import { ExpressionSyntaxError } from './errors'
 import { MAX_EXPRESSION_LENGTH, parse } from './parser'
 
-const BINARY_SYMBOLS = { add: '+', subtract: '-', multiply: '*', divide: '/', power: '^' }
-const UNARY_NAMES = { negate: 'neg', sqrt: 'sqrt', percentage: 'pct' }
+const BINARY_SYMBOLS: Record<BinaryOperation, string> = {
+  [BinaryOperation.Add]: '+',
+  [BinaryOperation.Subtract]: '-',
+  [BinaryOperation.Multiply]: '*',
+  [BinaryOperation.Divide]: '/',
+  [BinaryOperation.Power]: '^',
+}
+const UNARY_NAMES: Record<UnaryOperator, string> = {
+  [UnaryOperator.Negate]: 'neg',
+  [UnaryOperator.Sqrt]: 'sqrt',
+  [UnaryOperator.Percentage]: 'pct',
+}
 
 function show(expr: Expr): string {
   switch (expr.kind) {
-    case 'number':
+    case ExprKind.Number:
       return String(expr.value)
-    case 'binary':
+    case ExprKind.Binary:
       return `(${show(expr.left)} ${BINARY_SYMBOLS[expr.op]} ${show(expr.right)})`
-    case 'unary':
+    case ExprKind.Unary:
       return `${UNARY_NAMES[expr.op]}(${show(expr.operand)})`
   }
 }

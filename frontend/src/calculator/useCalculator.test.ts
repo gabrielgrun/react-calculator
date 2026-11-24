@@ -1,7 +1,8 @@
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { ApiError, type CalculatorApi } from '../api/calculatorClient'
+import { ApiError } from '../api/calculatorClient'
 import { createFakeCalculatorApi } from '../test/fakeCalculatorApi'
+import { type CalculatorApi, DisplayKind } from '../types'
 import { useCalculator } from './useCalculator'
 
 function setup(api: CalculatorApi = createFakeCalculatorApi()) {
@@ -33,7 +34,7 @@ describe('useCalculator', () => {
     await submit()
 
     expect(result.current.expression).toBe('2+3')
-    expect(result.current.display).toEqual({ kind: 'result', value: '5' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: '5' })
   })
 
   it('starts a new expression when a digit is typed after a result', async () => {
@@ -44,7 +45,7 @@ describe('useCalculator', () => {
     type('7')
 
     expect(result.current.expression).toBe('7')
-    expect(result.current.display).toEqual({ kind: 'idle' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Idle })
   })
 
   it('continues from the result when an operator is typed after it', async () => {
@@ -61,12 +62,12 @@ describe('useCalculator', () => {
     const { result, type, submit } = setup()
     type('1e25*1')
     await submit()
-    expect(result.current.display).toEqual({ kind: 'result', value: '1e+25' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: '1e+25' })
 
     type('*', '2')
     await submit()
 
-    expect(result.current.display).toEqual({ kind: 'result', value: '2e+25' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: '2e+25' })
   })
 
   it('shows syntax errors without calling the API', async () => {
@@ -76,7 +77,10 @@ describe('useCalculator', () => {
     type('(1+2')
     await submit()
 
-    expect(result.current.display).toEqual({ kind: 'error', message: 'Missing closing ")"' })
+    expect(result.current.display).toEqual({
+      kind: DisplayKind.Error,
+      message: 'Missing closing ")"',
+    })
     expect(api.calls).toEqual([])
   })
 
@@ -90,7 +94,10 @@ describe('useCalculator', () => {
     type('1/0')
     await submit()
 
-    expect(result.current.display).toEqual({ kind: 'error', message: 'Cannot divide by zero' })
+    expect(result.current.display).toEqual({
+      kind: DisplayKind.Error,
+      message: 'Cannot divide by zero',
+    })
   })
 
   it('clears the error and keeps editing when typing after an error', async () => {
@@ -101,7 +108,7 @@ describe('useCalculator', () => {
     type(')')
 
     expect(result.current.expression).toBe('(1+2)')
-    expect(result.current.display).toEqual({ kind: 'idle' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Idle })
   })
 
   it('shows loading and ignores input and repeated submits while a request is in flight', async () => {
@@ -119,7 +126,7 @@ describe('useCalculator', () => {
     type('9')
     await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
 
-    expect(result.current.display).toEqual({ kind: 'loading' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Loading })
     expect(result.current.expression).toBe('2+3')
     expect(callCount()).toBe(1)
 
@@ -127,7 +134,7 @@ describe('useCalculator', () => {
       resolvers.forEach((resolve) => resolve(5))
       await firstSubmit
     })
-    expect(result.current.display).toEqual({ kind: 'result', value: '5' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: '5' })
   })
 
   it('ignores input that would exceed the maximum length', () => {
@@ -157,6 +164,6 @@ describe('useCalculator', () => {
     act(() => result.current.clear())
 
     expect(result.current.expression).toBe('')
-    expect(result.current.display).toEqual({ kind: 'idle' })
+    expect(result.current.display).toEqual({ kind: DisplayKind.Idle })
   })
 })
