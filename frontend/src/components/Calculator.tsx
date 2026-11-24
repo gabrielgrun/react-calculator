@@ -31,6 +31,9 @@ export function Calculator({ api }: CalculatorProps) {
   }
 
   const handleKeyDown = useEffectEvent((event: KeyboardEvent) => {
+    if (event.key === 'Enter' && event.target instanceof HTMLButtonElement) {
+      return
+    }
     const action = keyboardAction(event)
     if (action === undefined) {
       return

@@ -50,6 +50,16 @@ describe('Calculator', () => {
     expect(expression()).toHaveTextContent('√9')
   })
 
+  it('lets Enter press the focused keypad button', async () => {
+    const { user, expression } = renderCalculator()
+
+    screen.getByRole('button', { name: '7' }).focus()
+    await user.keyboard('{Enter}')
+
+    expect(expression()).toHaveTextContent('7')
+    expect(screen.getByRole('status')).toHaveTextContent('')
+  })
+
   it('ignores keys pressed with a modifier', async () => {
     const { user, expression } = renderCalculator()
 
