@@ -1,5 +1,5 @@
 .calculator {
-  width: min(100%, 380px);
+  width: min(100%, 400px);
   padding: 16px;
   border-radius: 24px;
   background: var(--surface);
@@ -97,10 +97,21 @@
   font-weight: 600;
 }
 
+@media (min-width: 768px) {
+  .calculator {
+    width: 440px;
+    padding: 20px;
+  }
+
+  .key {
+    min-height: 64px;
+    font-size: 1.5rem;
+  }
+}
+
 @media (max-width: 360px) {
   .calculator {
     padding: 12px;
-    border-radius: 0;
   }
 
   .keypad {
