@@ -74,8 +74,14 @@ make coverage   # writes backend/coverage.html and frontend/coverage/index.html
 | **Backend total** | | **91.1%** |
 | Frontend (97 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.8%** (97.6% branches) |
 
-`npm run test:coverage` fails below 90% lines/functions/statements or 85% branches. CI uploads both
-coverage reports as artifacts on every push.
+Tests live next to the code they cover: `*_test.go` in the backend and `*.test.ts(x)` in the
+frontend.
+
+`npm run test:coverage` fails below 90% lines/functions/statements or 85% branches.
+
+**Coverage reports online:** every [CI run](https://github.com/gabrielgrun/react-calculator/actions/workflows/ci.yml)
+shows the backend and frontend coverage summaries on its page, and attaches the full HTML reports
+as downloadable artifacts (`backend-coverage`, `frontend-coverage`).
 
 ## API
 
@@ -127,6 +133,31 @@ curl -X POST localhost:8080/api/v1/add -d '{"a":"2","b":3}'
 # 400 {"error":{"code":"invalid_json","message":"request body must be a JSON object with numeric operands"}}
 ```
 
+## Input validation & error handling
+
+Invalid input never crashes the app or reaches the API as a malformed request.
+
+**Frontend** (shown in the display before any request is made):
+
+- Syntax errors with a precise message: `Unexpected "*"`, `Missing closing ")"`,
+  `Expected ")" but found "]"`, `Unexpected end of expression`.
+- Invalid numbers (`1.2.3`), unknown characters, and numbers too large to represent (`1e999`).
+- Expressions longer than 200 characters are blocked with a message.
+- API errors become readable messages (`Cannot divide by zero`,
+  `Cannot take the square root of a negative number`), and an unreachable server shows
+  `Couldn't reach the server`.
+- While a calculation is in flight the display shows `Calculating…`, the equals key is disabled,
+  and repeated submits are ignored.
+
+**Backend** (every request is validated independently of the UI):
+
+- Body limited to 1 KB; unknown fields, wrong types and trailing data are rejected.
+- A missing operand is distinguished from `0`.
+- Division by zero, square roots of negative numbers, undefined results (`NaN`) and overflow
+  (`±Inf`) are caught and returned as `422` with a specific error code.
+- Unknown endpoints and wrong HTTP methods return JSON errors too, so clients always get the
+  same error shape (see [API](#api)).
+
 ## How the expression engine works
 
 Users type whole expressions such as `2×[3+(4−1)]`. The frontend turns the text into a tree and
@@ -164,6 +195,10 @@ asks the backend to compute each node, so the UI is built directly on the per-op
 
 ## Design decisions & assumptions
 
+- **A real expression engine is a correctness requirement, not an extra.** Once the UI accepts
+  more than one operation, precedence has to be handled somewhere, and a pocket-calculator
+  approach gives wrong answers like `2+3×4 = 20`. The parser is kept small (one function per
+  precedence level) and fully tested.
 - **The frontend parses, the backend computes.** I compared three approaches:
   - *(chosen)* The frontend builds the expression tree and calls one endpoint per operation. Each
     layer has a single responsibility: the frontend owns input syntax (brackets, precedence), the
