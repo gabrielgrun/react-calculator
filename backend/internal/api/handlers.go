@@ -63,8 +63,8 @@ func handleHealth(w http.ResponseWriter, _ *http.Request) {
 	writeJSON(w, http.StatusOK, statusResponse{Status: "ok"})
 }
 
-func decodeRequest(w http.ResponseWriter, r *http.Request, dst any) bool {
-	err := decodeJSON(w, r, dst)
+func decodeRequest(w http.ResponseWriter, r *http.Request, target any) bool {
+	err := decodeJSON(w, r, target)
 	if err == nil {
 		return true
 	}
@@ -78,10 +78,10 @@ func decodeRequest(w http.ResponseWriter, r *http.Request, dst any) bool {
 	return false
 }
 
-func decodeJSON(w http.ResponseWriter, r *http.Request, dst any) error {
+func decodeJSON(w http.ResponseWriter, r *http.Request, target any) error {
 	decoder := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxBodyBytes))
 	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(dst); err != nil {
+	if err := decoder.Decode(target); err != nil {
 		return err
 	}
 	err := decoder.Decode(&struct{}{})
