@@ -13,11 +13,13 @@ export const MAX_EXPRESSION_LENGTH = 200
 
 const MATCHING_BRACKET: Record<OpenBracket, CloseBracket> = { '(': ')', '[': ']', '{': '}' }
 
-const ADDITIVE: Partial<Record<Operator, BinaryOperation>> = {
+type OperatorTable = Partial<Record<Operator, BinaryOperation>>
+
+const ADDITIVE: OperatorTable = {
   [Operator.Plus]: BinaryOperation.Add,
   [Operator.Minus]: BinaryOperation.Subtract,
 }
-const MULTIPLICATIVE: Partial<Record<Operator, BinaryOperation>> = {
+const MULTIPLICATIVE: OperatorTable = {
   [Operator.Times]: BinaryOperation.Multiply,
   [Operator.Divide]: BinaryOperation.Divide,
 }
@@ -64,33 +66,28 @@ export function parse(input: string): Expr {
   const peek = (): Token | undefined => tokens[index]
   const next = (): Token | undefined => tokens[index++]
 
-  function binaryOperationOf(
-    table: Partial<Record<Operator, BinaryOperation>>,
-  ): BinaryOperation | undefined {
+  function binaryOperationOf(table: OperatorTable): BinaryOperation | undefined {
     const token = peek()
     return token?.type === TokenType.Operator ? table[token.value] : undefined
   }
 
-  function parseExpression(): Expr {
-    let left = parseTerm()
-    let op = binaryOperationOf(ADDITIVE)
+  function parseLeftAssociative(table: OperatorTable, parseOperand: () => Expr): Expr {
+    let left = parseOperand()
+    let op = binaryOperationOf(table)
     while (op !== undefined) {
       next()
-      left = { kind: ExprKind.Binary, op, left, right: parseTerm() }
-      op = binaryOperationOf(ADDITIVE)
+      left = { kind: ExprKind.Binary, op, left, right: parseOperand() }
+      op = binaryOperationOf(table)
     }
     return left
   }
 
+  function parseExpression(): Expr {
+    return parseLeftAssociative(ADDITIVE, parseTerm)
+  }
+
   function parseTerm(): Expr {
-    let left = parseUnary()
-    let op = binaryOperationOf(MULTIPLICATIVE)
-    while (op !== undefined) {
-      next()
-      left = { kind: ExprKind.Binary, op, left, right: parseUnary() }
-      op = binaryOperationOf(MULTIPLICATIVE)
-    }
-    return left
+    return parseLeftAssociative(MULTIPLICATIVE, parseUnary)
   }
 
   function parseUnary(): Expr {
