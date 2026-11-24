@@ -51,7 +51,7 @@ it for development, as the brief requires.*
 
 ## 4. Implementation approach
 
-*The AI wrote a 13-task implementation plan and offered to execute it directly in this session,
+*The AI wrote an implementation plan and offered to execute it directly in this session,
 pausing for my review after the backend, the expression engine and the UI.*
 
 > Write the tests first, make sure they fail, and only then write the implementation. Run it
@@ -133,3 +133,8 @@ keypad key. Then I chose which of the minor findings to fix:*
 
 *Idiomatic short names were kept (`w`, `r`, `t`, `err`, as in Go's standard library); `v` and
 `dst` became `payload` and `target`.*
+
+> Could a very large expression cause an out-of-memory error?
+
+*A stress test of the worst cases showed memory stays bounded by the 200-character input limit
+and the 1 KB request cap.*
