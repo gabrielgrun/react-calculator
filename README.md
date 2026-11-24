@@ -72,7 +72,7 @@ make coverage   # writes backend/coverage.html and frontend/coverage/index.html
 | Backend — `internal/api` | HTTP tests through the real router (`httptest`) | 97.4% |
 | Backend — `cmd/server` | configuration, startup and graceful shutdown | 67.9% |
 | **Backend total** | | **91.1%** |
-| Frontend (102 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.9%** (97.7% branches) |
+| Frontend (104 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.9%** (97.7% branches) |
 
 Tests live next to the code they cover: `*_test.go` in the backend and `*.test.ts(x)` in the
 frontend.
