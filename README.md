@@ -32,6 +32,12 @@ docker compose up --build
 
 Open **http://localhost:8080**. One container serves both the UI and the API.
 
+## AI-assisted workflow
+
+I built this with Claude Code as a pair programmer, while keeping the decisions mine: planning
+before any code, questioning the design, test-first implementation, code reviews and an
+independent review pass. Every prompt is in [PROMPTS.md](PROMPTS.md), organized by phase.
+
 ## Development
 
 Prerequisites: **Go 1.27+** and **Node.js 24+** (22.13+ also works).
