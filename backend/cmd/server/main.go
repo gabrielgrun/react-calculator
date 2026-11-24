@@ -20,13 +20,15 @@ const (
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	if err := run(logger, loadConfig(os.Getenv)); err != nil {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	if err := run(ctx, logger, loadConfig(os.Getenv)); err != nil {
 		logger.Error("server stopped", "error", err)
 		os.Exit(1)
 	}
 }
 
-func run(logger *slog.Logger, cfg config) error {
+func run(ctx context.Context, logger *slog.Logger, cfg config) error {
 	var static http.Handler
 	if cfg.StaticDir != "" {
 		static = http.FileServer(http.Dir(cfg.StaticDir))
@@ -36,9 +38,6 @@ func run(logger *slog.Logger, cfg config) error {
 		Handler:           api.NewRouter(logger, static),
 		ReadHeaderTimeout: readHeaderTimeout,
 	}
-
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
 
 	listenErr := make(chan error, 1)
 	go func() {
