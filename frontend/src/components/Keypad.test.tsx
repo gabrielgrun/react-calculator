@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { Keypad } from './Keypad'
-import { KEYS, type KeyAction, KeyActionType } from './keys'
+import { Keypad } from '@/components/Keypad'
+import { KEYS, type KeyAction, KeyActionType } from '@/components/keys'
 
 describe('Keypad', () => {
   it('gives every key an accessible name', () => {

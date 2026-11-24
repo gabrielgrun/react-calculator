@@ -1,9 +1,9 @@
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { ApiError } from '../api/calculatorClient'
-import { createFakeCalculatorApi } from '../test/fakeCalculatorApi'
-import { ApiErrorCode, type CalculatorApi, DisplayKind } from '../types'
-import { useCalculator } from './useCalculator'
+import { ApiError } from '@/api/calculatorClient'
+import { createFakeCalculatorApi } from '@/test/fakeCalculatorApi'
+import { ApiErrorCode, type CalculatorApi, DisplayKind } from '@/types'
+import { useCalculator } from '@/calculator/useCalculator'
 
 function setup(api: CalculatorApi = createFakeCalculatorApi()) {
   const { result } = renderHook(() => useCalculator(api))

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { ApiError } from '../api/calculatorClient'
-import { ApiErrorCode, BinaryOperation, type CalculatorApi, UnaryOperation } from '../types'
-import { createFakeCalculatorApi } from '../test/fakeCalculatorApi'
-import { evaluate } from './evaluator'
-import { parse } from './parser'
+import { ApiError } from '@/api/calculatorClient'
+import { ApiErrorCode, BinaryOperation, type CalculatorApi, UnaryOperation } from '@/types'
+import { createFakeCalculatorApi } from '@/test/fakeCalculatorApi'
+import { evaluate } from '@/expression/evaluator'
+import { parse } from '@/expression/parser'
 
 describe('evaluate', () => {
   it('resolves the tree bottom-up, one API call per operation', async () => {

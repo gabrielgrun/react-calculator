@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { ExpressionSyntaxError } from './errors'
-import { tokenize } from './tokenizer'
+import { ExpressionSyntaxError } from '@/expression/errors'
+import { tokenize } from '@/expression/tokenizer'
 
 function syntaxErrorOf(input: string): ExpressionSyntaxError {
   try {

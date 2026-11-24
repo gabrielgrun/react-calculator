@@ -1,5 +1,5 @@
-import { formatResult } from '../calculator/format'
-import { DisplayKind, type DisplayState } from '../types'
+import { formatResult } from '@/calculator/format'
+import { DisplayKind, type DisplayState } from '@/types'
 
 interface DisplayProps {
   expression: string

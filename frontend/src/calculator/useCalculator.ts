@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
-import { evaluate } from '../expression/evaluator'
-import { MAX_EXPRESSION_LENGTH, TOO_LONG_MESSAGE, parse } from '../expression/parser'
-import { type CalculatorApi, DisplayKind, type DisplayState, type Expr } from '../types'
-import { MINUS_SIGN, errorMessage } from './format'
+import { evaluate } from '@/expression/evaluator'
+import { MAX_EXPRESSION_LENGTH, TOO_LONG_MESSAGE, parse } from '@/expression/parser'
+import { type CalculatorApi, DisplayKind, type DisplayState, type Expr } from '@/types'
+import { MINUS_SIGN, errorMessage } from '@/calculator/format'
 
 interface CalculatorState {
   expression: string

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { ApiError, NetworkError } from '../api/calculatorClient'
-import { ExpressionSyntaxError } from '../expression/errors'
-import { ApiErrorCode } from '../types'
-import { errorMessage, formatResult } from './format'
+import { ApiError, NetworkError } from '@/api/calculatorClient'
+import { ExpressionSyntaxError } from '@/expression/errors'
+import { ApiErrorCode } from '@/types'
+import { errorMessage, formatResult } from '@/calculator/format'
 
 describe('formatResult', () => {
   it.each([

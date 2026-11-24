@@ -1,10 +1,10 @@
 import { useEffect, useEffectEvent } from 'react'
-import { useCalculator } from '../calculator/useCalculator'
-import { type CalculatorApi, DisplayKind } from '../types'
-import { Display } from './Display'
-import { Keypad } from './Keypad'
-import { type KeyAction, KeyActionType, keyboardAction } from './keys'
-import './Calculator.css'
+import { useCalculator } from '@/calculator/useCalculator'
+import { type CalculatorApi, DisplayKind } from '@/types'
+import { Display } from '@/components/Display'
+import { Keypad } from '@/components/Keypad'
+import { type KeyAction, KeyActionType, keyboardAction } from '@/components/keys'
+import '@/components/Calculator.css'
 
 interface CalculatorProps {
   api: CalculatorApi

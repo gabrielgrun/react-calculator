@@ -1,4 +1,4 @@
-import { BinaryOperation, type CalculatorApi, UnaryOperation } from '../types'
+import { BinaryOperation, type CalculatorApi, UnaryOperation } from '@/types'
 
 export type RecordedCall =
   { op: BinaryOperation; a: number; b: number } | { op: UnaryOperation; a: number }

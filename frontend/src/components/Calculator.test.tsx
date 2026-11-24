@@ -1,10 +1,10 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
-import { ApiError } from '../api/calculatorClient'
-import { createFakeCalculatorApi } from '../test/fakeCalculatorApi'
-import { ApiErrorCode, type CalculatorApi } from '../types'
-import { Calculator } from './Calculator'
+import { ApiError } from '@/api/calculatorClient'
+import { createFakeCalculatorApi } from '@/test/fakeCalculatorApi'
+import { ApiErrorCode, type CalculatorApi } from '@/types'
+import { Calculator } from '@/components/Calculator'
 
 function renderCalculator(api: CalculatorApi = createFakeCalculatorApi()) {
   render(<Calculator api={api} />)

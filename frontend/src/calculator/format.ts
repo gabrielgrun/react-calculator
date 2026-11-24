@@ -1,6 +1,6 @@
-import { ApiError, NetworkError } from '../api/calculatorClient'
-import { ExpressionSyntaxError } from '../expression/errors'
-import { ApiErrorCode } from '../types'
+import { ApiError, NetworkError } from '@/api/calculatorClient'
+import { ExpressionSyntaxError } from '@/expression/errors'
+import { ApiErrorCode } from '@/types'
 
 const SIGNIFICANT_DIGITS = 15
 const HYPHEN_MINUS = /-/g

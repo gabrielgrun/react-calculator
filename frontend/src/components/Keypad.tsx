@@ -1,4 +1,4 @@
-import { KEYS, type KeyAction, KeyActionType } from './keys'
+import { KEYS, type KeyAction, KeyActionType } from '@/components/keys'
 
 interface KeypadProps {
   onKey: (action: KeyAction) => void

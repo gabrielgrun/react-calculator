@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ApiErrorCode, BinaryOperation, UnaryOperation } from '../types'
-import { ApiError, NetworkError, createCalculatorApi } from './calculatorClient'
+import { ApiErrorCode, BinaryOperation, UnaryOperation } from '@/types'
+import { ApiError, NetworkError, createCalculatorApi } from '@/api/calculatorClient'
 
 function jsonResponse(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {

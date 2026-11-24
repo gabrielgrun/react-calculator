@@ -1,5 +1,5 @@
-import type { ValueOf } from '../types'
-import { ExpressionSyntaxError } from './errors'
+import type { ValueOf } from '@/types'
+import { ExpressionSyntaxError } from '@/expression/errors'
 
 export const Operator = {
   Plus: '+',

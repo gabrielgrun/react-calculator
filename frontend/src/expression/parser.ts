@@ -1,5 +1,5 @@
-import { BinaryOperation, type Expr, ExprKind, UnaryOperator } from '../types'
-import { ExpressionSyntaxError } from './errors'
+import { BinaryOperation, type Expr, ExprKind, UnaryOperator } from '@/types'
+import { ExpressionSyntaxError } from '@/expression/errors'
 import {
   type CloseBracket,
   type OpenBracket,
@@ -7,7 +7,7 @@ import {
   type Token,
   TokenType,
   tokenize,
-} from './tokenizer'
+} from '@/expression/tokenizer'
 
 export const MAX_EXPRESSION_LENGTH = 200
 export const TOO_LONG_MESSAGE = `Expression is too long (max ${MAX_EXPRESSION_LENGTH} characters)`

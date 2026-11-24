@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { BinaryOperation, type Expr, ExprKind, UnaryOperator } from '../types'
-import { ExpressionSyntaxError } from './errors'
-import { MAX_EXPRESSION_LENGTH, parse } from './parser'
+import { BinaryOperation, type Expr, ExprKind, UnaryOperator } from '@/types'
+import { ExpressionSyntaxError } from '@/expression/errors'
+import { MAX_EXPRESSION_LENGTH, parse } from '@/expression/parser'
 
 const BINARY_SYMBOLS: Record<BinaryOperation, string> = {
   [BinaryOperation.Add]: '+',

@@ -1,4 +1,4 @@
-import { BinaryOperation, type CalculatorApi, type Expr, ExprKind, UnaryOperator } from '../types'
+import { BinaryOperation, type CalculatorApi, type Expr, ExprKind, UnaryOperator } from '@/types'
 
 export async function evaluate(expr: Expr, api: CalculatorApi): Promise<number> {
   switch (expr.kind) {
