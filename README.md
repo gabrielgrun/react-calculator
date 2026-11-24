@@ -59,7 +59,7 @@ make coverage   # writes backend/coverage.html and frontend/coverage/index.html
 | Backend — `internal/api` | HTTP tests through the real router (`httptest`) | 97.1% |
 | Backend — `cmd/server` | config + startup/graceful shutdown | 67.9% (the rest is `main()` wiring) |
 | **Backend total** | | **90.4%** |
-| Frontend (93 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.8%** (97.4% branches) |
+| Frontend (97 tests) | tokenizer, parser, evaluator, API client, state hook, components | **98.8%** (97.4% branches) |
 
 `npm run test:coverage` fails below 90% lines/functions/statements or 85% branches. CI uploads both
 coverage reports as artifacts on every push.
@@ -162,8 +162,10 @@ tree and asks the backend to compute each node, so **every endpoint above is use
   impossible. Clients can tell "fix your request" from "this has no answer".
 - **`%` always means `/100`:** `200×10%` = 20, but `200+10%` = 200.1, unlike phone calculators
   that treat it as "10% of 200". The consistent rule is easier to reason about.
-- **Numbers are IEEE-754 doubles** (`float64` / JS `number`). Results are shown with 12
-  significant digits, so `0.1+0.2` shows `0.3`. Arbitrary precision is out of scope.
+- **Numbers are IEEE-754 doubles** (`float64` / JS `number`). Results are shown with 15
+  significant digits (the most decimal digits a double always preserves), so `0.1+0.2` shows
+  `0.3`. Continuing from a result uses the full-precision value, so `1÷3`, then `×3`, gives `1`.
+  Arbitrary precision is out of scope.
 - **Validation on both layers:** the frontend rejects bad syntax and numbers too large to send
   (`1e999`) before calling the API. The backend still validates everything it receives, since
   other clients can call it.
