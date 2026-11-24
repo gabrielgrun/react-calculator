@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { evaluate } from '../expression/evaluator'
 import { MAX_EXPRESSION_LENGTH, TOO_LONG_MESSAGE, parse } from '../expression/parser'
 import { type CalculatorApi, DisplayKind, type DisplayState, type Expr } from '../types'
-import { errorMessage } from './format'
+import { MINUS_SIGN, errorMessage } from './format'
 
 interface CalculatorState {
   expression: string
@@ -13,7 +13,7 @@ const IDLE: DisplayState = { kind: DisplayKind.Idle }
 const STARTS_WITH_OPERATOR = /^[+\-*/^%×÷−]/
 
 function resultAsOperand(value: number): string {
-  return value < 0 ? `(${value})` : String(value)
+  return value < 0 ? `(${MINUS_SIGN}${-value})` : String(value)
 }
 
 function editableText(state: CalculatorState, text: string): string {

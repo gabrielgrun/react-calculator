@@ -4,7 +4,7 @@ import { ApiErrorCode } from '../types'
 
 const SIGNIFICANT_DIGITS = 15
 const HYPHEN_MINUS = /-/g
-const MINUS_SIGN = '−'
+export const MINUS_SIGN = '−'
 
 const API_ERROR_MESSAGES: Partial<Record<string, string>> = {
   [ApiErrorCode.DivisionByZero]: 'Cannot divide by zero',

@@ -76,6 +76,7 @@ describe('useCalculator', () => {
     await submit()
 
     type('^', '2')
+    expect(result.current.expression).toBe('(−5)^2')
     await submit()
 
     expect(result.current.display).toEqual({ kind: DisplayKind.Result, value: 25 })
