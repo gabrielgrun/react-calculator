@@ -1,13 +1,14 @@
 import { ApiError, NetworkError } from '../api/calculatorClient'
 import { ExpressionSyntaxError } from '../expression/errors'
+import { ApiErrorCode } from '../types'
 
 const SIGNIFICANT_DIGITS = 15
 
 const API_ERROR_MESSAGES: Partial<Record<string, string>> = {
-  division_by_zero: 'Cannot divide by zero',
-  negative_sqrt: 'Cannot take the square root of a negative number',
-  undefined_result: 'Result is undefined',
-  overflow: 'Result is too large',
+  [ApiErrorCode.DivisionByZero]: 'Cannot divide by zero',
+  [ApiErrorCode.NegativeSqrt]: 'Cannot take the square root of a negative number',
+  [ApiErrorCode.UndefinedResult]: 'Result is undefined',
+  [ApiErrorCode.Overflow]: 'Result is too large',
 }
 
 export function formatResult(value: number): string {

@@ -52,3 +52,17 @@ export type DisplayState =
   | { kind: typeof DisplayKind.Loading }
   | { kind: typeof DisplayKind.Result; value: number }
   | { kind: typeof DisplayKind.Error; message: string }
+
+export const ApiErrorCode = {
+  InvalidJson: 'invalid_json',
+  MissingOperand: 'missing_operand',
+  PayloadTooLarge: 'payload_too_large',
+  NotFound: 'not_found',
+  MethodNotAllowed: 'method_not_allowed',
+  DivisionByZero: 'division_by_zero',
+  NegativeSqrt: 'negative_sqrt',
+  UndefinedResult: 'undefined_result',
+  Overflow: 'overflow',
+  UnexpectedResponse: 'unexpected_response',
+} as const
+export type ApiErrorCode = ValueOf<typeof ApiErrorCode>

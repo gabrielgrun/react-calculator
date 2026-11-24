@@ -29,10 +29,10 @@ func route(mux *http.ServeMux, method, path string, handler http.Handler) {
 	mux.Handle(method+" "+path, handler)
 	mux.HandleFunc(path, func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Allow", method)
-		writeError(w, http.StatusMethodNotAllowed, "method_not_allowed", fmt.Sprintf("use %s for %s", method, path))
+		writeError(w, http.StatusMethodNotAllowed, codeMethodNotAllowed, fmt.Sprintf("use %s for %s", method, path))
 	})
 }
 
 func handleNotFound(w http.ResponseWriter, r *http.Request) {
-	writeError(w, http.StatusNotFound, "not_found", fmt.Sprintf("no API endpoint at %s", r.URL.Path))
+	writeError(w, http.StatusNotFound, codeNotFound, fmt.Sprintf("no API endpoint at %s", r.URL.Path))
 }

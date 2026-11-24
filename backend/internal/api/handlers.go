@@ -70,11 +70,11 @@ func decodeRequest(w http.ResponseWriter, r *http.Request, dst any) bool {
 	}
 	var tooLarge *http.MaxBytesError
 	if errors.As(err, &tooLarge) {
-		writeError(w, http.StatusRequestEntityTooLarge, "payload_too_large",
+		writeError(w, http.StatusRequestEntityTooLarge, codePayloadTooLarge,
 			fmt.Sprintf("request body must not exceed %d bytes", maxBodyBytes))
 		return false
 	}
-	writeError(w, http.StatusBadRequest, "invalid_json", errInvalidJSON.Error())
+	writeError(w, http.StatusBadRequest, codeInvalidJSON, errInvalidJSON.Error())
 	return false
 }
 
@@ -100,7 +100,7 @@ func requireOperand(w http.ResponseWriter, name string, value *float64) bool {
 	if value != nil {
 		return true
 	}
-	writeError(w, http.StatusBadRequest, "missing_operand", fmt.Sprintf("operand %q is required", name))
+	writeError(w, http.StatusBadRequest, codeMissingOperand, fmt.Sprintf("operand %q is required", name))
 	return false
 }
 
@@ -114,19 +114,19 @@ func respondWithResult(w http.ResponseWriter, result float64, err error) {
 
 var mathErrorCodes = []struct {
 	err  error
-	code string
+	code errorCode
 }{
-	{calculator.ErrDivisionByZero, "division_by_zero"},
-	{calculator.ErrNegativeSqrt, "negative_sqrt"},
-	{calculator.ErrUndefinedResult, "undefined_result"},
-	{calculator.ErrOverflow, "overflow"},
+	{calculator.ErrDivisionByZero, codeDivisionByZero},
+	{calculator.ErrNegativeSqrt, codeNegativeSqrt},
+	{calculator.ErrUndefinedResult, codeUndefinedResult},
+	{calculator.ErrOverflow, codeOverflow},
 }
 
-func mathErrorCode(err error) string {
+func mathErrorCode(err error) errorCode {
 	for _, entry := range mathErrorCodes {
 		if errors.Is(err, entry.err) {
 			return entry.code
 		}
 	}
-	return "calculation_failed"
+	return codeCalculationFailed
 }

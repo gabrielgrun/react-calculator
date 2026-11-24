@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { ApiError, NetworkError } from '../api/calculatorClient'
 import { ExpressionSyntaxError } from '../expression/errors'
+import { ApiErrorCode } from '../types'
 import { errorMessage, formatResult } from './format'
 
 describe('formatResult', () => {
@@ -19,10 +20,10 @@ describe('formatResult', () => {
 
 describe('errorMessage', () => {
   it.each([
-    ['division_by_zero', 'Cannot divide by zero'],
-    ['negative_sqrt', 'Cannot take the square root of a negative number'],
-    ['undefined_result', 'Result is undefined'],
-    ['overflow', 'Result is too large'],
+    [ApiErrorCode.DivisionByZero, 'Cannot divide by zero'],
+    [ApiErrorCode.NegativeSqrt, 'Cannot take the square root of a negative number'],
+    [ApiErrorCode.UndefinedResult, 'Result is undefined'],
+    [ApiErrorCode.Overflow, 'Result is too large'],
   ])('maps the API code %s to a friendly message', (code, message) => {
     expect(errorMessage(new ApiError(code, 'raw server message'))).toBe(message)
   })

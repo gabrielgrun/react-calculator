@@ -6,8 +6,8 @@ import (
 )
 
 type errorDetail struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
+	Code    errorCode `json:"code"`
+	Message string    `json:"message"`
 }
 
 type errorResponse struct {
@@ -20,6 +20,6 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 	_ = json.NewEncoder(w).Encode(v)
 }
 
-func writeError(w http.ResponseWriter, status int, code, message string) {
+func writeError(w http.ResponseWriter, status int, code errorCode, message string) {
 	writeJSON(w, status, errorResponse{Error: errorDetail{Code: code, Message: message}})
 }

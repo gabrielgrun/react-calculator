@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ApiError } from '../api/calculatorClient'
-import type { CalculatorApi } from '../types'
+import { ApiErrorCode, BinaryOperation, type CalculatorApi, UnaryOperation } from '../types'
 import { createFakeCalculatorApi } from '../test/fakeCalculatorApi'
 import { evaluate } from './evaluator'
 import { parse } from './parser'
@@ -12,9 +12,9 @@ describe('evaluate', () => {
     await expect(evaluate(parse('2*[3+(4-1)]'), api)).resolves.toBe(12)
 
     expect(api.calls).toEqual([
-      { op: 'subtract', a: 4, b: 1 },
-      { op: 'add', a: 3, b: 3 },
-      { op: 'multiply', a: 2, b: 6 },
+      { op: BinaryOperation.Subtract, a: 4, b: 1 },
+      { op: BinaryOperation.Add, a: 3, b: 3 },
+      { op: BinaryOperation.Multiply, a: 2, b: 6 },
     ])
   })
 
@@ -31,7 +31,7 @@ describe('evaluate', () => {
 
     await expect(evaluate(parse('-5'), api)).resolves.toBe(-5)
 
-    expect(api.calls).toEqual([{ op: 'subtract', a: 0, b: 5 }])
+    expect(api.calls).toEqual([{ op: BinaryOperation.Subtract, a: 0, b: 5 }])
   })
 
   it('calls the unary endpoints for square root and percentage', async () => {
@@ -41,8 +41,8 @@ describe('evaluate', () => {
     await evaluate(parse('50%'), api)
 
     expect(api.calls).toEqual([
-      { op: 'sqrt', a: 9 },
-      { op: 'percentage', a: 50 },
+      { op: UnaryOperation.Sqrt, a: 9 },
+      { op: UnaryOperation.Percentage, a: 50 },
     ])
   })
 
@@ -52,7 +52,7 @@ describe('evaluate', () => {
     const api: CalculatorApi = {
       binary: (op, a, b) => {
         started.push(`${op}(${a},${b})`)
-        if (op !== 'add') {
+        if (op !== BinaryOperation.Add) {
           return Promise.resolve(a * b)
         }
         return new Promise((resolve) => pending.push(() => resolve(a + b)))
@@ -69,7 +69,7 @@ describe('evaluate', () => {
   })
 
   it('propagates API errors unchanged', async () => {
-    const failure = new ApiError('division_by_zero', 'division by zero')
+    const failure = new ApiError(ApiErrorCode.DivisionByZero, 'division by zero')
     const api: CalculatorApi = {
       binary: () => Promise.reject(failure),
       unary: () => Promise.reject(failure),

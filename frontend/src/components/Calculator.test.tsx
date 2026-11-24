@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { ApiError } from '../api/calculatorClient'
 import { createFakeCalculatorApi } from '../test/fakeCalculatorApi'
-import type { CalculatorApi } from '../types'
+import { ApiErrorCode, type CalculatorApi } from '../types'
 import { Calculator } from './Calculator'
 
 function renderCalculator(api: CalculatorApi = createFakeCalculatorApi()) {
@@ -70,7 +70,7 @@ describe('Calculator', () => {
 
   it('shows API errors as friendly messages', async () => {
     const failing: CalculatorApi = {
-      binary: () => Promise.reject(new ApiError('division_by_zero', 'division by zero')),
+      binary: () => Promise.reject(new ApiError(ApiErrorCode.DivisionByZero, 'division by zero')),
       unary: () => Promise.reject(new Error('unused')),
     }
     const { user, status } = renderCalculator(failing)

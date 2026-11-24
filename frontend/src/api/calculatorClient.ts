@@ -1,4 +1,4 @@
-import type { CalculatorApi } from '../types'
+import { ApiErrorCode, type CalculatorApi } from '../types'
 
 export class ApiError extends Error {
   readonly code: string
@@ -51,7 +51,10 @@ async function readJson(response: Response): Promise<unknown> {
 }
 
 function unexpectedResponse(status: number): ApiError {
-  return new ApiError('unexpected_response', `Unexpected response from the server (HTTP ${status})`)
+  return new ApiError(
+    ApiErrorCode.UnexpectedResponse,
+    `Unexpected response from the server (HTTP ${status})`,
+  )
 }
 
 export function createCalculatorApi(

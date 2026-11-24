@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { ApiError } from '../api/calculatorClient'
 import { createFakeCalculatorApi } from '../test/fakeCalculatorApi'
-import { type CalculatorApi, DisplayKind } from '../types'
+import { ApiErrorCode, type CalculatorApi, DisplayKind } from '../types'
 import { useCalculator } from './useCalculator'
 
 function setup(api: CalculatorApi = createFakeCalculatorApi()) {
@@ -108,7 +108,7 @@ describe('useCalculator', () => {
 
   it('shows API errors as friendly messages', async () => {
     const failing: CalculatorApi = {
-      binary: () => Promise.reject(new ApiError('division_by_zero', 'division by zero')),
+      binary: () => Promise.reject(new ApiError(ApiErrorCode.DivisionByZero, 'division by zero')),
       unary: () => Promise.reject(new Error('unused')),
     }
     const { result, type, submit } = setup(failing)
