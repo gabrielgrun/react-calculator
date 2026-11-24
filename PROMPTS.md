@@ -138,3 +138,7 @@ keypad key. Then I chose which of the minor findings to fix:*
 
 *A stress test of the worst cases showed memory stays bounded by the 200-character input limit
 and the 1 KB request cap.*
+
+> I saw relative imports like `../types` in the frontend. Use absolute imports instead.
+
+*Imports now go through an `@/` alias for `src`, configured in both TypeScript and Vite.*
