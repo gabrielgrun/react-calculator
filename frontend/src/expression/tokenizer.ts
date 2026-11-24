@@ -36,7 +36,11 @@ function readNumber(input: string, position: number): { token: Token; length: nu
   if (!VALID_NUMBER.test(lexeme)) {
     throw new ExpressionSyntaxError(`Invalid number "${lexeme}"`, position)
   }
-  return { token: { type: 'number', value: Number(lexeme), position }, length: lexeme.length }
+  const value = Number(lexeme)
+  if (!Number.isFinite(value)) {
+    throw new ExpressionSyntaxError(`Number "${lexeme}" is too large`, position)
+  }
+  return { token: { type: 'number', value, position }, length: lexeme.length }
 }
 
 export function tokenize(input: string): Token[] {

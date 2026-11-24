@@ -76,6 +76,13 @@ describe('tokenize', () => {
     expect(syntaxErrorOf('.')).toMatchObject({ message: 'Invalid number "."', position: 0 })
   })
 
+  it('rejects numbers too large to represent', () => {
+    expect(syntaxErrorOf('1+1e999')).toMatchObject({
+      message: 'Number "1e999" is too large',
+      position: 2,
+    })
+  })
+
   it('rejects unknown characters', () => {
     expect(syntaxErrorOf('2a')).toMatchObject({ message: 'Unexpected character "a"', position: 1 })
   })
