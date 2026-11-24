@@ -55,9 +55,7 @@ it for development, as the brief requires.*
 pausing for my review after the backend, the expression engine and the UI.*
 
 > Write the tests first, make sure they fail, and only then write the implementation. Run it
-> directly in this session.
-
-> Are we making small commits for each part? Commit after every task, but only push at the end.
+> directly in this session. Commit after every task, but only push at the end.
 
 ## 5. Reviewing the code
 
@@ -105,8 +103,6 @@ magic numbers plus a non-extensible error `switch` in Go.*
 
 ## 6. Testing it myself
 
-> Where can I see the calculator running?
-
 > *(screenshot)* It looks cramped on a large screen.
 
 *The layout used a CSS grid that shrank the calculator to its minimum width; fixed and checked on
@@ -125,3 +121,9 @@ keypad key. Then I chose which of the minor findings to fix:*
 > Fix the Node.js version in the README, the 400 that should be a 413, the error codes that are
 > bare strings, the non-JSON 404/405 responses, the missing feedback at the length limit, and the
 > server timeouts.
+
+## 8. Final checks and delivery
+
+> Now review the README as well.
+
+> I've run my own tests through Docker and everything works. Merge into main and push.
