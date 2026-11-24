@@ -122,8 +122,14 @@ keypad key. Then I chose which of the minor findings to fix:*
 > bare strings, the non-JSON 404/405 responses, the missing feedback at the length limit, and the
 > server timeouts.
 
-## 8. Final checks and delivery
+## 8. Final checks
 
 > Now review the README as well.
 
 > I've run my own tests through Docker and everything works. Merge into main and push.
+
+> I noticed some Go variables with single-letter names. Review the naming and rename whatever
+> isn't descriptive.
+
+*Idiomatic short names were kept (`w`, `r`, `t`, `err`, as in Go's standard library); `v` and
+`dst` became `payload` and `target`.*
